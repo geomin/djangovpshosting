@@ -1,0 +1,29 @@
+#! /bin/bash
+# /etc/init.d/djangovpshosting
+#
+
+daemon=/opt/djangovpshosting/env/bin/uwsgi
+pid=/opt/djangovpshosting/djangovpshosting/run/uwsgi.pid
+args="-i /opt/djangovpshosting/djangovpshosting/conf/uwsgi.ini"
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+    start)
+        echo "Starting djangovpshosting"
+        start-stop-daemon -p $pid --start --chuid www-data --exec $daemon -- $args
+        ;;
+    stop)
+        echo "Stopping script djangovpshosting"
+        start-stop-daemon --signal INT -p $pid --stop $daemon -- $args
+        ;;
+    reload)
+        echo "Reloading conf"
+        kill -HUP $(cat /opt/djangovpshosting/djangovpshosting/run/uwsgi.pid)
+        ;;
+    *)
+        echo "Usage: /etc/init.d/djangovpshosting {start|stop|reload}"
+        exit 1
+    ;;
+esac
+
+exit 0
